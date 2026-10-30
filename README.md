@@ -15,10 +15,10 @@ Tanpa konfigurasi Firebase, transaksi disimpan di penyimpanan lokal browser. Dat
 
 ## Mengaktifkan sinkronisasi Firebase
 
-1. Buat proyek Firebase dan aktifkan **Realtime Database**.
-2. Salin konfigurasi aplikasi web Firebase dari pengaturan proyek.
-3. Ganti nilai contoh `firebaseConfig` di dalam `index.html` dengan konfigurasi proyek Anda.
-4. Atur Firebase Authentication dan Realtime Database Security Rules agar data hanya dapat diakses oleh pengguna yang berhak.
+1. Proyek Firebase `ma-money-f8b74` sudah dimasukkan ke konfigurasi aplikasi web di `index.html`.
+2. Buat atau aktifkan **Realtime Database** di Firebase Console, lalu salin URL database yang ditampilkan.
+3. Ganti nilai `YOUR_DATABASE_URL` pada `databaseURL` di `index.html` dengan URL tersebut. Sinkronisasi antarperangkat belum aktif sampai URL ini diisi.
+4. Atur Realtime Database Security Rules agar data hanya dapat diakses oleh pengguna yang berhak. Firebase Authentication belum diimplementasikan.
 
 ### Cara deploy (jadi link URL)
 
@@ -29,7 +29,7 @@ Tanpa konfigurasi Firebase, transaksi disimpan di penyimpanan lokal browser. Dat
    - Buka [app.netlify.com/drop](https://app.netlify.com/drop)
    - Drag folder `Ma-Money` → dapat URL langsung.
 
-Firebase SDK dimuat dari CDN saat konfigurasi Firebase sudah diisi. Jika koneksi Firebase gagal, aplikasi menampilkan pesan kesalahan dan tidak diam-diam beralih ke penyimpanan lokal.
+Firebase SDK dimuat dari CDN setelah seluruh konfigurasi, termasuk `databaseURL`, sudah diisi. Jika URL database belum diatur, aplikasi menampilkan pesan dan tetap menyimpan transaksi secara lokal. Jika koneksi Firebase gagal setelah dikonfigurasi, aplikasi menampilkan pesan kesalahan dan tidak diam-diam beralih ke penyimpanan lokal.
 
 **Jangan gunakan rules yang mengizinkan semua orang membaca atau menulis database.** Rules yang menolak semua akses juga akan membuat sinkronisasi tidak berfungsi. Untuk penggunaan pribadi, aktifkan autentikasi dan buat rules yang membatasi akses ke data pengguna yang sudah login. Jangan menaruh kredensial server atau rahasia di file frontend.
 

@@ -33,16 +33,16 @@ Konfigurasi proyek `ma-money-f8b74` dan URL Realtime Database sudah dimasukkan k
    }
    ```
 
-3. Jalankan atau deploy aplikasi melalui domain yang diizinkan Firebase Authentication (**Authentication → Settings → Authorized domains**).
+3. Di Firebase Console → **Authentication → Settings → Authorized domains**, tambahkan domain `chalo0o.github.io` (tanpa `https://` dan tanpa path). Domain ini harus ditambahkan di Firebase Console; file aplikasi tidak dapat mengubah daftar domain yang diizinkan. Biarkan `authDomain` di `index.html` sebagai `ma-money-f8b74.firebaseapp.com` karena itu adalah endpoint callback Firebase, bukan domain halaman aplikasi.
 4. Buka aplikasi dan pilih **Masuk dengan Google**, lalu pilih akun Google yang ingin digunakan. Transaksi yang dibuat sebelum login akan disinkronkan otomatis.
 
 Transaksi disimpan pada `users/{uid}/transactions`. Jangan mengganti rules dengan akses publik (`.read`/`.write` bernilai `true`). Data lama pada path `/transactions`, jika ada, tidak otomatis dipindahkan ke path akun.
 
 ### Cara deploy (jadi link URL)
 
-1. **GitHub Pages** (free, pakai repo Public):
+1. **GitHub Pages** (repo `chalo0o/Ma-Money`):
    - Settings → Pages → Source: `Deploy from a branch` → branch `main` → folder `/ (root)`
-   - Tunggu sebentar, dapat URL: `https://<USERNAME>.github.io/<NAMA_REPO>/`
+   - Setelah deploy, URL aplikasi: `https://chalo0o.github.io/Ma-Money/`
 2. **Netlify Drop** (lebih simple, drag & drop):
    - Buka [app.netlify.com/drop](https://app.netlify.com/drop)
    - Drag folder `Ma-Money` → dapat URL langsung.

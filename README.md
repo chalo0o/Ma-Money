@@ -4,12 +4,41 @@ Aplikasi web sederhana untuk mencatat pemasukan dan pengeluaran, melihat ringkas
 
 Tampilannya memakai gaya retro dengan warna cerah, dan tombol **Mode gelap/Mode terang** di bagian atas untuk mengganti tema.
 
+Riwayat transaksi juga dapat difilter berdasarkan bulan dan tahun, serta dilengkapi grafik perbandingan pemasukan dan pengeluaran untuk periode yang dipilih.
+
+## 🧮 Fitur Utama
+
+### Filter Transaksi Berdasarkan Bulan/Tahun
+
+- Filter transaksi berdasarkan bulan Januari–Desember.
+- Filter transaksi berdasarkan tahun yang tersedia pada data.
+- Data dimuat dari Firebase atau penyimpanan lokal, lalu difilter di browser agar perubahan periode cepat.
+
+### Grafik Pemasukan & Pengeluaran
+
+- Membandingkan total pemasukan dan pengeluaran dalam grafik batang.
+- Mengikuti filter bulan dan tahun yang sama dengan ringkasan serta daftar transaksi.
+- Grafik dihitung dari transaksi yang sudah difilter di browser.
+
+Fitur utama lainnya: pencatatan pemasukan/pengeluaran, ringkasan dan tabungan otomatis, hapus transaksi, mode tamu dengan penyimpanan lokal, login Google, sinkronisasi Firebase per akun, serta tema terang/gelap.
+
+## 🚧 Fitur yang Akan Ditambahkan
+
+- [x] Login akun Firebase (Auth) — Google Sign-In.
+- [x] Filter transaksi berdasarkan bulan/tahun.
+- [x] Grafik pemasukan & pengeluaran.
+- [ ] Export data ke CSV.
+- [ ] Export data ke PDF.
+- [ ] Notifikasi batas tabungan.
+- [ ] Export PDF/kuitansi.
+
 ## Menjalankan aplikasi
 
 1. Jalankan `index.html` melalui server web lokal atau buka URL deploy. Login Google lebih andal melalui `http://localhost` atau domain deploy daripada membuka file langsung.
 2. Pilih jenis transaksi, masukkan deskripsi dan jumlah dalam rupiah, lalu pilih **+ Tambah transaksi**.
-3. Ringkasan pemasukan, pengeluaran, dan tabungan diperbarui otomatis.
-4. Hapus transaksi satu per satu, atau pilih **Hapus semua** untuk mengosongkan riwayat.
+3. Gunakan filter **Bulan** dan **Tahun** di atas grafik. Pilih **Semua bulan** atau **Semua tahun** untuk menghapus batas filter.
+4. Ringkasan, grafik, jumlah transaksi, dan daftar riwayat mengikuti periode yang dipilih. Grafik membandingkan total pemasukan dan pengeluaran.
+5. Hapus transaksi satu per satu, **Hapus hasil filter**, atau **Hapus semua**.
 
 Aplikasi dan seluruh fitur tetap tampil tanpa login. Sebelum login, transaksi disimpan secara lokal di browser/perangkat ini. Tombol **Masuk dengan Google** berada tepat di bawah sakelar tema. Saat login, transaksi lokal disalin ke akun Google lalu aplikasi menampilkan data akun dari Firebase. Setiap akun hanya dapat melihat transaksi miliknya sendiri.
 
@@ -48,6 +77,13 @@ Transaksi disimpan pada `users/{uid}/transactions`. Jangan mengganti rules denga
    - Drag folder `Ma-Money` → dapat URL langsung.
 
 Firebase App, Authentication (Google), dan Realtime Database dimuat dari CDN. Tanpa login, aplikasi berfungsi dalam mode tamu dan menyimpan data secara lokal. Setelah login, transaksi tamu disalin ke `users/{uid}/transactions` dengan ID yang sama supaya percobaan sinkronisasi ulang tidak membuat salinan ganda. Salinan lokal baru dihapus setelah aplikasi berhasil membaca data akun dari Firebase. Jika sinkronisasi gagal, data lokal tetap ditampilkan dan tidak dihapus.
+
+### Filter dan grafik
+
+- Filter bulan menyediakan Januari hingga Desember; filter tahun otomatis memuat tahun yang ditemukan pada transaksi serta tahun berjalan.
+- Filter bekerja di browser atas transaksi yang sudah dimuat, baik dari Firebase maupun penyimpanan lokal. Mengubah filter tidak meminta ulang data ke server.
+- Ringkasan total, tabungan, jumlah transaksi, daftar riwayat, dan grafik memakai periode filter yang sama. **Hapus hasil filter** hanya menghapus transaksi yang sedang ditampilkan; **Hapus semua** menghapus seluruh riwayat.
+- Grafik batang membandingkan total pemasukan dan pengeluaran pada periode aktif. Jika tidak ada transaksi pada periode itu, grafik menampilkan nilai nol dan keterangan kosong.
 
 Firebase API key pada frontend adalah pengenal aplikasi web, bukan kredensial server. Jangan menaruh kredensial server atau rahasia di file frontend.
 

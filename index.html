@@ -223,14 +223,18 @@
   <script type="module">
     const LOCAL_STORAGE_KEY = "keuangan-pribadi-transactions-v1";
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyBP1sZYejzUwRU4iX9OBwmGIHnbTouniCY",
+      authDomain: "ma-money-f8b74.firebaseapp.com",
+      databaseURL: "https://ma-money-f8b74-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ma-money-f8b74",
+      storageBucket: "ma-money-f8b74.firebasestorage.app",
+      messagingSenderId: "986586320143",
+      appId: "1:986586320143:web:9fd5d3fb09dacdf77b027a",
+      measurementId: "G-GZ6FMG6XGT"
     };
+    const firebaseAppConfigured = Object.entries(firebaseConfig)
+      .filter(([key]) => key !== "databaseURL" && key !== "measurementId")
+      .every(([, value]) => typeof value === "string" && value.length > 0 && !value.includes("YOUR_"));
     const firebaseConfigured = Object.values(firebaseConfig).every(
       value => typeof value === "string" && value.length > 0 && !value.includes("YOUR_")
     );
@@ -487,6 +491,11 @@
       await startFirebase();
     } else {
       await startLocalStorage();
+      if (firebaseAppConfigured) {
+        elements.storageLabel.textContent = "URL Firebase belum diatur";
+        elements.storageNote.textContent = "Transaksi disimpan lokal sampai URL Realtime Database ditambahkan ke firebaseConfig.";
+        showNotice("Konfigurasi Firebase sudah dimasukkan, tetapi sinkronisasi belum aktif. Isi databaseURL dengan URL Realtime Database dari Firebase Console.");
+      }
     }
   </script>
 </body>

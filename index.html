@@ -309,6 +309,7 @@
               <span class="field-hint">Gunakan angka saja, contoh: 3.000.000</span>
             </label>
             <button class="primary-button" id="submitTransactionButton" type="submit">+ Tambah transaksi</button>
+            <button class="text-button" id="cancelEditButton" type="button" hidden>Batal ubah</button>
           </form>
         </section>
 
@@ -355,6 +356,7 @@
       form: document.getElementById("transactionForm"),
       formTitle: document.getElementById("formTitle"),
       submitButton: document.getElementById("submitTransactionButton"),
+      cancelEdit: document.getElementById("cancelEditButton"),
       type: document.getElementById("type"),
       description: document.getElementById("description"),
       amount: document.getElementById("amount"),
@@ -474,6 +476,7 @@
       elements.form.reset();
       elements.formTitle.textContent = "Tambah transaksi";
       elements.submitButton.textContent = "+ Tambah transaksi";
+      elements.cancelEdit.hidden = true;
     }
 
     function updateSelectionActions() {
@@ -661,11 +664,16 @@
       editingTransactionId = id;
       elements.formTitle.textContent = "Ubah transaksi";
       elements.submitButton.textContent = "Simpan perubahan";
+      elements.cancelEdit.hidden = false;
       elements.type.value = item.type;
       elements.description.value = item.description;
       elements.amount.value = formatNumberForInput(item.amount);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      elements.form.scrollIntoView({ behavior: "smooth", block: "center" });
+      elements.description.focus({ preventScroll: true });
+      showNotice(`Sedang mengubah transaksi "${item.description}". Ubah isian lalu pilih Simpan perubahan.`, true);
     }
+
+    elements.cancelEdit.addEventListener("click", resetTransactionForm);
 
     async function deleteOne(id) {
       const item = transactions.find(transaction => transaction.id === id);

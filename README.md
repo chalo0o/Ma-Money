@@ -57,7 +57,7 @@ Setelah login, data lokal akan disinkronkan ke akun Google pada Firebase, dan ti
 
 ## Konfigurasi Firebase
 
-Konfigurasi proyek `ma-money-f8b74` dan URL Realtime Database sudah dimasukkan ke `index.html`.
+Konfigurasi proyek `ma-money-f8b74` dan URL Realtime Database sudah dimasukkan ke `app.js`.
 
 Untuk mengaktifkan sinkronisasi:
 
@@ -94,11 +94,15 @@ Catatan penting:
 
 ```text
 Ma-Money/
-├── index.html          # UI dan logika aplikasi utama
+├── index.html          # Struktur halaman aplikasi
+├── styles.css          # Gaya, tema, dan tata letak
+├── app.js              # Logika aplikasi dan integrasi Firebase
 ├── README.md           # Dokumentasi proyek
 ├── .gitignore          # File yang diabaikan Git
-└── server.log          # Log lokal yang mungkin dibuat saat pengujian
+└── server.log          # Log lokal (opsional, bukan bagian aplikasi)
 ```
+
+`index.html` memuat `styles.css` dan `app.js`. Simpan ketiga file aplikasi tersebut dalam folder yang sama agar halaman dan seluruh fiturnya berjalan dengan benar.
 
 ## Keamanan dan privasi
 

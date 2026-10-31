@@ -1,95 +1,159 @@
-# Keuangan Pribadi
+# Ma-Money
 
-Aplikasi web sederhana untuk mencatat pemasukan dan pengeluaran, melihat ringkasan keuangan, dan menghitung tabungan secara otomatis.
+Aplikasi web sederhana untuk mencatat pemasukan dan pengeluaran, menampilkan ringkasan keuangan, mengelola tabungan, serta melihat perbandingan transaksi berdasarkan bulan dan tahun.
 
-Tampilannya memakai gaya retro dengan warna cerah, dan tombol **Mode gelap/Mode terang** di bagian atas untuk mengganti tema.
+Project ini dibuat sebagai aplikasi single-page yang dapat dijalankan tanpa backend, dengan dukungan mode tamu serta sinkronisasi data per akun Google melalui Firebase Realtime Database.
 
-Riwayat transaksi juga dapat difilter berdasarkan bulan dan tahun, serta dilengkapi grafik perbandingan pemasukan dan pengeluaran untuk periode yang dipilih.
+## Fitur utama
 
-## 🧮 Fitur Utama
+- Pencatatan transaksi pemasukan dan pengeluaran
+- Ringkasan total pemasukan, pengeluaran, dan tabungan otomatis
+- Filter transaksi berdasarkan bulan dan tahun
+- Grafik perbandingan pemasukan vs pengeluaran
+- Mode tamu dengan penyimpanan lokal di browser
+- Login Google dengan Firebase Auth
+- Sinkronisasi data per akun pengguna
+- Tema terang dan gelap
+- Hapus transaksi satu per satu, berdasarkan filter, atau seluruh data
+- Edit / ubah transaksi dengan memilih item lalu simpan ulang ke Firebase
+- Bulk delete / pilih banyak transaksi sekaligus
+- Notifikasi harian 21:00 sebagai reminder untuk menyelesaikan pencatatan hari ini
+- Alert berhasil menambah atau menghapus transaksi
 
-### Filter Transaksi Berdasarkan Bulan/Tahun
+## Teknologi yang dipakai
 
-- Filter transaksi berdasarkan bulan Januari–Desember.
-- Filter transaksi berdasarkan tahun yang tersedia pada data.
-- Data dimuat dari Firebase atau penyimpanan lokal, lalu difilter di browser agar perubahan periode cepat.
+- HTML5
+- CSS3
+- JavaScript vanilla
+- Firebase Authentication
+- Firebase Realtime Database
 
-### Grafik Pemasukan & Pengeluaran
+## Cara menjalankan
 
-- Membandingkan total pemasukan dan pengeluaran dalam grafik batang.
-- Mengikuti filter bulan dan tahun yang sama dengan ringkasan serta daftar transaksi.
-- Grafik dihitung dari transaksi yang sudah difilter di browser.
+### 1. Jalankan secara lokal
 
-Fitur utama lainnya: pencatatan pemasukan/pengeluaran, ringkasan dan tabungan otomatis, hapus transaksi, mode tamu dengan penyimpanan lokal, login Google, sinkronisasi Firebase per akun, serta tema terang/gelap.
+Buka file `index.html` menggunakan server web lokal, atau akses URL deploy yang sudah dibuat. Untuk pengalaman login Google yang lebih stabil, disarankan menggunakan `http://localhost` atau domain deploy, bukan membuka file langsung dari filesystem.
 
-## 🚧 Fitur yang Akan Ditambahkan
+### 2. Tambahkan transaksi
 
-- [x] Login akun Firebase (Auth) — Google Sign-In.
-- [x] Filter transaksi berdasarkan bulan/tahun.
-- [x] Grafik pemasukan & pengeluaran.
-- [ ] Export data ke CSV.
-- [ ] Export data ke PDF.
-- [ ] Notifikasi batas tabungan.
-- [ ] Export PDF/kuitansi.
+1. Pilih jenis transaksi (`Pemasukan` atau `Pengeluaran`)
+2. Masukkan deskripsi transaksi
+3. Masukkan nominal dalam rupiah
+4. Klik tombol `+ Tambah transaksi`
 
-## Menjalankan aplikasi
+### 3. Gunakan filter
 
-1. Jalankan `index.html` melalui server web lokal atau buka URL deploy. Login Google lebih andal melalui `http://localhost` atau domain deploy daripada membuka file langsung.
-2. Pilih jenis transaksi, masukkan deskripsi dan jumlah dalam rupiah, lalu pilih **+ Tambah transaksi**.
-3. Gunakan filter **Bulan** dan **Tahun** di atas grafik. Pilih **Semua bulan** atau **Semua tahun** untuk menghapus batas filter.
-4. Ringkasan, grafik, jumlah transaksi, dan daftar riwayat mengikuti periode yang dipilih. Grafik membandingkan total pemasukan dan pengeluaran.
-5. Hapus transaksi satu per satu, **Hapus hasil filter**, atau **Hapus semua**.
+Gunakan filter bulan dan tahun untuk melihat data sesuai periode tertentu. Jika ingin menampilkan semua data, pilih opsi `Semua bulan` atau `Semua tahun`.
 
-Aplikasi dan seluruh fitur tetap tampil tanpa login. Sebelum login, transaksi disimpan secara lokal di browser/perangkat ini. Tombol **Masuk dengan Google** berada tepat di bawah sakelar tema. Saat login, transaksi lokal disalin ke akun Google lalu aplikasi menampilkan data akun dari Firebase. Setiap akun hanya dapat melihat transaksi miliknya sendiri.
+### 4. Lihat ringkasan dan grafik
 
-## Mengaktifkan sinkronisasi Firebase
+Ringkasan, jumlah transaksi, daftar riwayat, dan grafik akan mengikuti periode yang aktif. Grafik membandingkan total pemasukan dan pengeluaran dalam rentang waktu yang sedang dipilih.
+
+## Mode tamu dan autentikasi
+
+Aplikasi tetap bisa digunakan tanpa login. Saat belum login, data disimpan di browser/perangkat lokal. Tombol `Masuk dengan Google` tersedia di bagian atas halaman.
+
+Setelah login, data lokal akan disinkronkan ke akun Google pada Firebase, dan tiap akun hanya dapat melihat transaksi miliknya sendiri. Saat logout, aplikasi akan menampilkan kembali data mode tamu dari browser ini.
+
+## Konfigurasi Firebase
 
 Konfigurasi proyek `ma-money-f8b74` dan URL Realtime Database sudah dimasukkan ke `index.html`.
 
-1. Di Firebase Console, buka **Authentication → Sign-in method** dan aktifkan penyedia **Google**.
-2. Di **Realtime Database → Rules**, terapkan dan publikasikan rules berikut untuk membatasi baca/tulis ke pemilik akun:
+Untuk mengaktifkan sinkronisasi:
 
-   ```json
-   {
-     "rules": {
-       "users": {
-         "$uid": {
-           ".read": "auth != null && auth.uid === $uid",
-           ".write": "auth != null && auth.uid === $uid"
-         }
-       }
-     }
-   }
-   ```
+1. Buka Firebase Console
+2. Masuk ke **Authentication** → **Sign-in method**
+3. Aktifkan provider **Google**
+4. Buka **Realtime Database** → **Rules**
+5. Terapkan rule berikut:
 
-3. Di Firebase Console → **Authentication → Settings → Authorized domains**, tambahkan domain `chalo0o.github.io` (tanpa `https://` dan tanpa path). Domain ini harus ditambahkan di Firebase Console; file aplikasi tidak dapat mengubah daftar domain yang diizinkan. Biarkan `authDomain` di `index.html` sebagai `ma-money-f8b74.firebaseapp.com` karena itu adalah endpoint callback Firebase, bukan domain halaman aplikasi.
-4. Buka aplikasi dan pilih **Masuk dengan Google**, lalu pilih akun Google yang ingin digunakan. Transaksi yang dibuat sebelum login akan disinkronkan otomatis.
+```json
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}
+```
 
-Transaksi disimpan pada `users/{uid}/transactions`. Jangan mengganti rules dengan akses publik (`.read`/`.write` bernilai `true`). Data lama pada path `/transactions`, jika ada, tidak otomatis dipindahkan ke path akun.
+6. Di **Authentication** → **Settings** → **Authorized domains**, tambahkan domain aplikasi Anda, misalnya `chalo0o.github.io`.
+7. Buka aplikasi dan login menggunakan akun Google yang diinginkan.
 
-### Cara deploy (jadi link URL)
+Catatan penting:
 
-1. **GitHub Pages** (repo `chalo0o/Ma-Money`):
-   - Settings → Pages → Source: `Deploy from a branch` → branch `main` → folder `/ (root)`
-   - Setelah deploy, URL aplikasi: `https://chalo0o.github.io/Ma-Money/`
-2. **Netlify Drop** (lebih simple, drag & drop):
-   - Buka [app.netlify.com/drop](https://app.netlify.com/drop)
-   - Drag folder `Ma-Money` → dapat URL langsung.
+- Data disimpan di path `users/{uid}/transactions`
+- Jangan mengizinkan akses publik dengan `.read` dan `.write` bernilai `true`
+- Data lama pada path `/transactions` tidak otomatis dipindahkan ke path akun baru
+- API key yang dipakai di frontend adalah identifier aplikasi web, bukan kredensial server
 
-Firebase App, Authentication (Google), dan Realtime Database dimuat dari CDN. Tanpa login, aplikasi berfungsi dalam mode tamu dan menyimpan data secara lokal. Setelah login, transaksi tamu disalin ke `users/{uid}/transactions` dengan ID yang sama supaya percobaan sinkronisasi ulang tidak membuat salinan ganda. Salinan lokal baru dihapus setelah aplikasi berhasil membaca data akun dari Firebase. Jika sinkronisasi gagal, data lokal tetap ditampilkan dan tidak dihapus.
+## Struktur proyek
 
-### Filter dan grafik
+```text
+Ma-Money/
+├── index.html          # UI dan logika aplikasi utama
+├── README.md           # Dokumentasi proyek
+├── .gitignore          # File yang diabaikan Git
+└── server.log          # Log lokal yang mungkin dibuat saat pengujian
+```
 
-- Filter bulan menyediakan Januari hingga Desember; filter tahun otomatis memuat tahun yang ditemukan pada transaksi serta tahun berjalan.
-- Filter bekerja di browser atas transaksi yang sudah dimuat, baik dari Firebase maupun penyimpanan lokal. Mengubah filter tidak meminta ulang data ke server.
-- Ringkasan total, tabungan, jumlah transaksi, daftar riwayat, dan grafik memakai periode filter yang sama. **Hapus hasil filter** hanya menghapus transaksi yang sedang ditampilkan; **Hapus semua** menghapus seluruh riwayat.
-- Grafik batang membandingkan total pemasukan dan pengeluaran pada periode aktif. Jika tidak ada transaksi pada periode itu, grafik menampilkan nilai nol dan keterangan kosong.
+## Keamanan dan privasi
 
-Firebase API key pada frontend adalah pengenal aplikasi web, bukan kredensial server. Jangan menaruh kredensial server atau rahasia di file frontend.
+- Data pengguna yang login disimpan terpisah per akun Google
+- Firebase API key dan konfigurasi frontend tidak digunakan sebagai backend resmi
+- Jangan menaruh secret key, service account, atau kredensial admin di file frontend
+- Untuk production, pastikan aturan Firebase dibatasi hanya untuk pemilik akun tertentu
 
-## Catatan data
+## Deployment
 
-- Tabungan dihitung sebagai total pemasukan dikurangi total pengeluaran; nilainya dapat menjadi negatif.
-- Jumlah transaksi harus berupa bilangan bulat rupiah yang lebih besar dari nol; pemisah ribuan dengan titik, seperti `3.000.000`, didukung.
-- Setiap akun Google memiliki daftar transaksi terpisah. Keluar dari akun menampilkan kembali data mode tamu di browser ini, bukan data akun sebelumnya.
-- Ekspor atau backup data belum tersedia. Buat backup secara berkala sebelum mengubah konfigurasi atau menghapus data.
+### GitHub Pages
+
+1. Buka repository `chalo0o/Ma-Money`
+2. Masuk ke **Settings** → **Pages**
+3. Pilih **Deploy from a branch**
+4. Gunakan branch `main` dan folder `/ (root)`
+5. Aplikasi akan tersedia di URL:
+   `https://chalo0o.github.io/Ma-Money/`
+
+### Netlify
+
+- Buka [app.netlify.com/drop](https://app.netlify.com/drop)
+- Drag & drop folder project ke halaman tersebut
+- Netlify akan menghasilkan URL publik secara otomatis
+
+## Cara kerja data
+
+- Tabungan dihitung dari total pemasukan dikurangi total pengeluaran
+- Nilai tabungan bisa positif atau negatif
+- Filter bulan meliputi Januari hingga Desember
+- Filter tahun dibuat otomatis berdasarkan data transaksi yang ada dan tahun saat ini
+- Filter diproses di sisi browser, sehingga perubahan periode tidak perlu memuat ulang data dari server
+- Grafik menampilkan angka 0 ketika tidak ada transaksi pada periode yang dipilih
+
+## Catatan penting
+
+- Data pada mode tamu hanya tersimpan di browser/perangkat yang dipakai
+- Saat login berhasil, data tamu akan disalin ke akun Google
+- Jika sinkronisasi gagal, data lokal tetap tetap ditampilkan dan tidak otomatis dihapus
+- Backup data belum tersedia secara built-in; disarankan untuk melakukan backup secara berkala sebelum menghapus data atau mengubah konfigurasi
+
+## Roadmap
+
+Fitur yang sudah tersedia:
+
+- [x] Edit / ubah transaksi — pilih item, isi form, simpan ulang ke Firebase
+- [x] Bulk delete / pilih banyak
+- [x] Notifikasi harian 21:00 (reminder selesai catat hari ini)
+- [x] Alert berhasil menambah atau menghapus transaksi
+
+Fitur yang masih direncanakan:
+
+- [ ] Login akun Firebase (Auth) — Google Sign-In
+- [ ] Filter transaksi berdasarkan bulan/tahun
+- [ ] Grafik pemasukan & pengeluaran
+- [ ] Export data ke CSV / PDF
+- [ ] Notifikasi batas tabungan
+- [ ] Export ke PDF/kuitansi + notifikasi harian + alert berhasil hapus dan menambahkan transaksi

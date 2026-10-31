@@ -126,18 +126,27 @@
     .transaction-description { overflow: hidden; color: var(--ink); font-size: 14px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
     .transaction-date { margin-top: 4px; color: var(--muted); font-size: 11px; }
     .transaction-side { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; }
+    .transaction-select { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; }
+    .transaction-select input { width: 16px; height: 16px; margin: 0; accent-color: var(--green); }
+    .transaction-actions { display: flex; align-items: center; gap: 6px; }
     .transaction-amount { font-size: 13px; font-weight: 850; white-space: nowrap; }
     .transaction-amount.income { color: var(--green); }
     .transaction-amount.expense { color: var(--red); }
-    .delete-button { display: grid; width: 30px; height: 30px; place-items: center; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--muted); font-size: 17px; }
+    .edit-button, .delete-button { display: grid; width: 30px; height: 30px; place-items: center; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 800; }
+    .edit-button:hover { border-color: var(--line); background: var(--blue-soft); color: #255f7a; }
     .delete-button:hover { border-color: var(--line); background: var(--red-soft); color: var(--red); }
+    .transaction.selected { background: rgba(23, 107, 72, 0.07); border-radius: 8px; }
     .empty-state { padding: 44px 12px 50px; color: var(--muted); text-align: center; }
     .empty-icon { margin-bottom: 9px; font-size: 27px; }
     .empty-title { color: var(--ink); font-size: 14px; font-weight: 850; }
     .empty-copy { margin-top: 5px; font-size: 12px; }
-    .notice { display: none; margin-bottom: 18px; padding: 12px 14px; border: 2px solid var(--red); border-radius: 8px; background: var(--red-soft); color: var(--ink); font-size: 13px; font-weight: 650; line-height: 1.5; }
-    .notice.visible { display: block; }
+    .notice { display: none; align-items: center; gap: 12px; margin-bottom: 18px; padding: 13px 15px; border: 2px solid var(--red); border-radius: 9px; background: var(--red-soft); color: var(--ink); font-size: 13px; font-weight: 750; line-height: 1.5; box-shadow: 4px 4px 0 var(--line); }
+    .notice::before { display: grid; flex: 0 0 28px; width: 28px; height: 28px; place-items: center; border: 2px solid currentColor; border-radius: 7px; background: var(--surface); color: var(--red); content: "!"; font-size: 17px; font-weight: 900; }
+    .notice.visible { display: flex; animation: notice-pop .18s ease-out; }
     .notice.success { border-color: var(--green); background: var(--green-soft); color: var(--ink); }
+    .notice.success::before { color: var(--green); content: "✓"; }
+    @keyframes notice-pop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .notice.visible { animation: none; } }
     .footer-note { margin: 20px 2px 0; color: #869189; font-size: 11px; line-height: 1.6; }
     :root[data-theme="dark"] .footer-note { color: var(--muted); }
 
@@ -299,14 +308,17 @@
               </span>
               <span class="field-hint">Gunakan angka saja, contoh: 3.000.000</span>
             </label>
-            <button class="primary-button" type="submit">+ Tambah transaksi</button>
+            <button class="primary-button" id="submitTransactionButton" type="submit">+ Tambah transaksi</button>
           </form>
         </section>
 
         <section class="card transactions-panel" aria-labelledby="transactionsTitle">
           <div class="transactions-header">
             <h2 class="panel-heading" id="transactionsTitle">Riwayat transaksi <span class="transaction-count" id="transactionCount">0 transaksi</span></h2>
-            <button class="text-button" id="clearAllButton" type="button" hidden>Hapus semua</button>
+            <div class="transaction-tools">
+              <button class="text-button" id="deleteSelectedButton" type="button" hidden>Hapus terpilih</button>
+              <button class="text-button" id="clearAllButton" type="button" hidden>Hapus semua</button>
+            </div>
           </div>
           <ul class="transaction-list" id="transactionList" aria-live="polite"></ul>
           <div class="empty-state" id="emptyState">
@@ -341,6 +353,8 @@
 
     const elements = {
       form: document.getElementById("transactionForm"),
+      formTitle: document.getElementById("formTitle"),
+      submitButton: document.getElementById("submitTransactionButton"),
       type: document.getElementById("type"),
       description: document.getElementById("description"),
       amount: document.getElementById("amount"),
@@ -348,6 +362,7 @@
       empty: document.getElementById("emptyState"),
       count: document.getElementById("transactionCount"),
       clear: document.getElementById("clearAllButton"),
+      deleteSelected: document.getElementById("deleteSelectedButton"),
       income: document.getElementById("incomeTotal"),
       expense: document.getElementById("expenseTotal"),
       savings: document.getElementById("savingsTotal"),
@@ -397,6 +412,8 @@
     let stopTransactionListener = null;
     let cloudReady = false;
     let authStateVersion = 0;
+    let selectedTransactionIds = new Set();
+    let editingTransactionId = null;
 
     function showNotice(message, isSuccess = false) {
       elements.notice.textContent = message;
@@ -446,6 +463,36 @@
     function formatDate(value) {
       const date = new Date(value);
       return Number.isNaN(date.getTime()) ? "Tanggal tidak diketahui" : dateFormatter.format(date);
+    }
+
+    function formatNumberForInput(value) {
+      return Number(value).toLocaleString("id-ID");
+    }
+
+    function resetTransactionForm() {
+      editingTransactionId = null;
+      elements.form.reset();
+      elements.formTitle.textContent = "Tambah transaksi";
+      elements.submitButton.textContent = "+ Tambah transaksi";
+    }
+
+    function updateSelectionActions() {
+      const hasSelection = selectedTransactionIds.size > 0;
+      elements.deleteSelected.hidden = !hasSelection;
+    }
+
+    function checkDailyReminder() {
+      const now = new Date();
+      const todaysKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+      if (now.getHours() !== 21 || now.getMinutes() !== 0) return;
+      const lastReminder = localStorage.getItem("ma-money-last-reminder");
+      if (lastReminder === todaysKey) return;
+      localStorage.setItem("ma-money-last-reminder", todaysKey);
+      const message = "Jangan lupa catat pemasukan dan pengeluaran hari ini sebelum tidur.";
+      showNotice(message, true);
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("Ma-Money", { body: message });
+      }
     }
 
     function updateYearOptions() {
@@ -508,12 +555,13 @@
       elements.clear.textContent = filteredTransactions.length < transactions.length ? "Hapus hasil filter" : "Hapus semua";
       elements.empty.hidden = filteredTransactions.length > 0;
       updateChart(income, expense, filteredTransactions.length > 0);
+      updateSelectionActions();
       elements.list.replaceChildren();
 
       const sorted = [...filteredTransactions].sort((a, b) => b.createdAt - a.createdAt);
       for (const item of sorted) {
         const row = document.createElement("li");
-        row.className = "transaction";
+        row.className = `transaction${selectedTransactionIds.has(item.id) ? " selected" : ""}`;
 
         const main = document.createElement("div");
         main.className = "transaction-main";
@@ -534,9 +582,39 @@
 
         const side = document.createElement("div");
         side.className = "transaction-side";
+
+        const selectWrap = document.createElement("label");
+        selectWrap.className = "transaction-select";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = selectedTransactionIds.has(item.id);
+        checkbox.setAttribute("aria-label", `Pilih transaksi ${item.description}`);
+        checkbox.addEventListener("change", event => {
+          if (event.target.checked) {
+            selectedTransactionIds.add(item.id);
+          } else {
+            selectedTransactionIds.delete(item.id);
+          }
+          updateSelectionActions();
+          render();
+        });
+        selectWrap.append(checkbox);
+
         const amount = document.createElement("span");
         amount.className = `transaction-amount ${item.type}`;
         amount.textContent = `${item.type === "income" ? "+" : "−"} ${rupiah.format(item.amount)}`;
+
+        const actions = document.createElement("div");
+        actions.className = "transaction-actions";
+
+        const editButton = document.createElement("button");
+        editButton.className = "edit-button";
+        editButton.type = "button";
+        editButton.setAttribute("aria-label", `Ubah transaksi ${item.description}`);
+        editButton.title = "Ubah transaksi";
+        editButton.textContent = "✎";
+        editButton.addEventListener("click", () => beginEditTransaction(item.id));
+
         const deleteButton = document.createElement("button");
         deleteButton.className = "delete-button";
         deleteButton.type = "button";
@@ -544,7 +622,9 @@
         deleteButton.title = "Hapus transaksi";
         deleteButton.textContent = "×";
         deleteButton.addEventListener("click", () => deleteOne(item.id));
-        side.append(amount, deleteButton);
+
+        actions.append(editButton, deleteButton);
+        side.append(selectWrap, amount, actions);
         row.append(main, side);
         elements.list.append(row);
       }
@@ -575,6 +655,18 @@
       render();
     }
 
+    function beginEditTransaction(id) {
+      const item = transactions.find(transaction => transaction.id === id);
+      if (!item) return;
+      editingTransactionId = id;
+      elements.formTitle.textContent = "Ubah transaksi";
+      elements.submitButton.textContent = "Simpan perubahan";
+      elements.type.value = item.type;
+      elements.description.value = item.description;
+      elements.amount.value = formatNumberForInput(item.amount);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     async function deleteOne(id) {
       const item = transactions.find(transaction => transaction.id === id);
       if (!item || !window.confirm(`Hapus transaksi "${item.description}"?`)) return;
@@ -586,8 +678,30 @@
         } else {
           setLocalTransactions(transactions.filter(transaction => transaction.id !== id));
         }
+        showNotice("Transaksi berhasil dihapus.", true);
       } catch (error) {
         showNotice(`Transaksi gagal dihapus: ${error.message}`);
+      }
+    }
+
+    async function deleteSelectedTransactions() {
+      const selectedItems = transactions.filter(item => selectedTransactionIds.has(item.id));
+      if (!selectedItems.length) return;
+      if (!window.confirm(`Hapus ${selectedItems.length} transaksi yang dipilih?`)) return;
+      hideNotice();
+      try {
+        if (auth?.currentUser) {
+          if (!transactionRef || !cloudReady) throw new Error("Data akun belum tersinkron. Muat ulang halaman atau keluar untuk mencoba lagi.");
+          await Promise.all(selectedItems.map(item => removeTransaction(transactionRef, item.id)));
+        } else {
+          const next = transactions.filter(item => !selectedTransactionIds.has(item.id));
+          setLocalTransactions(next);
+        }
+        selectedTransactionIds.clear();
+        updateSelectionActions();
+        showNotice(`${selectedItems.length} transaksi berhasil dihapus.`, true);
+      } catch (error) {
+        showNotice(`Gagal menghapus transaksi terpilih: ${error.message}`);
       }
     }
 
@@ -603,13 +717,27 @@
         return;
       }
 
+      const currentTransaction = editingTransactionId ? transactions.find(item => item.id === editingTransactionId) : null;
       const transaction = {
         type: elements.type.value,
         description,
         amount,
-        createdAt: Date.now()
+        createdAt: currentTransaction ? currentTransaction.createdAt : Date.now()
       };
       try {
+        if (editingTransactionId) {
+          const nextTransactions = transactions.map(item => item.id === editingTransactionId ? { ...item, ...transaction } : item);
+          if (auth?.currentUser) {
+            if (!transactionRef || !cloudReady) throw new Error("Data akun belum tersinkron. Muat ulang halaman atau keluar untuk mencoba lagi.");
+            await setTransaction(transactionRef, editingTransactionId, { ...currentTransaction, ...transaction });
+          } else {
+            setLocalTransactions(nextTransactions);
+          }
+          resetTransactionForm();
+          showNotice("Transaksi berhasil diperbarui.", true);
+          return;
+        }
+
         if (auth?.currentUser) {
           if (!transactionRef || !cloudReady) throw new Error("Data akun belum tersinkron. Muat ulang halaman atau keluar untuk mencoba lagi.");
           await pushTransaction(transactionRef, transaction);
@@ -619,7 +747,7 @@
             { ...transaction, id: crypto.randomUUID() }
           ]);
         }
-        elements.form.reset();
+        resetTransactionForm();
         showNotice("Transaksi berhasil ditambahkan.", true);
       } catch (error) {
         showNotice(`Transaksi gagal disimpan: ${error.message}`);
@@ -643,14 +771,19 @@
           } else {
             await removeAllTransactions(transactionRef);
           }
+          showNotice(removesOnlyFiltered ? `${visibleTransactions.length} transaksi dari hasil filter berhasil dihapus.` : "Semua transaksi berhasil dihapus.", true);
         } else {
           const visibleIds = new Set(visibleTransactions.map(item => item.id));
-          setLocalTransactions(transactions.filter(item => !visibleIds.has(item.id)));
+          const nextTransactions = transactions.filter(item => !visibleIds.has(item.id));
+          setLocalTransactions(nextTransactions);
+          showNotice(removesOnlyFiltered ? `${visibleTransactions.length} transaksi dari hasil filter berhasil dihapus.` : "Semua transaksi berhasil dihapus.", true);
         }
       } catch (error) {
         showNotice(`Riwayat gagal dihapus: ${error.message}`);
       }
     });
+
+    elements.deleteSelected.addEventListener("click", deleteSelectedTransactions);
 
     async function startLocalStorage() {
       transactions = [];
@@ -809,6 +942,12 @@
         showNotice(`Firebase gagal diinisialisasi: ${error.message}. Data lokal tetap tersedia.`);
       }
     }
+
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {});
+    }
+    window.addEventListener("focus", checkDailyReminder);
+    setInterval(checkDailyReminder, 30000);
 
     await startLocalStorage();
     if (firebaseConfigured) {

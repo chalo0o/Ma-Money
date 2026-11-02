@@ -1,40 +1,48 @@
     :root {
       color-scheme: light;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #252116;
-      background: #fff6dd;
+      color: #353728;
+      background: #e9e4c9;
       font-synthesis: none;
       text-rendering: optimizeLegibility;
-      --page: #fff6dd;
-      --surface: #fffdf6;
-      --ink: #252116;
-      --muted: #766c58;
-      --line: #2d291f;
-      --green: #176b48;
-      --green-soft: #d7f0b5;
-      --red: #c33f2e;
-      --red-soft: #ffe0ad;
-      --blue-soft: #cceeff;
-      --shadow: 5px 5px 0 #2d291f;
+      --page: #e9e4c9;
+      --surface: #f5efd8;
+      --ink: #353728;
+      --muted: #777457;
+      --line: #454334;
+      --green: #606642;
+      --green-soft: #e0dfbd;
+      --red: #ae5c43;
+      --red-soft: #f0dbca;
+      --blue-soft: #e5e2c5;
+      --accent: #d6a344;
+      --accent-ink: #292317;
+      --focus: #a75a3f;
+      --paper-grain: rgba(77, 65, 41, .055);
+      --shadow: 4px 4px 0 #b4a779;
     }
 
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --page: #1d211e;
-      --surface: #292e29;
-      --ink: #fff3d4;
-      --muted: #c4b99e;
-      --line: #f0d998;
-      --green: #a7e6a1;
-      --green-soft: #354a35;
-      --red: #ff9a79;
-      --red-soft: #4a3730;
-      --blue-soft: #304953;
-      --shadow: 5px 5px 0 #090b09;
+      --page: #282b20;
+      --surface: #34372a;
+      --ink: #f1e7c7;
+      --muted: #c4b987;
+      --line: #ded19a;
+      --green: #bac27d;
+      --green-soft: #42452e;
+      --red: #eea08b;
+      --red-soft: #493832;
+      --blue-soft: #414331;
+      --accent: #d9a84e;
+      --accent-ink: #211d14;
+      --focus: #e4ad55;
+      --paper-grain: rgba(244, 232, 204, .035);
+      --shadow: 4px 4px 0 #17190f;
     }
 
     * { box-sizing: border-box; }
-    body { margin: 0; min-width: 320px; background: var(--page); color: var(--ink); transition: background .2s, color .2s; }
+    body { margin: 0; min-width: 320px; background-color: var(--page); background-image: radial-gradient(var(--paper-grain) .7px, transparent .7px); background-size: 7px 7px; color: var(--ink); font-weight: 500; transition: background-color .2s, color .2s; }
     button, input, select { font: inherit; }
     button { cursor: pointer; }
     .page { width: min(100% - 40px, 1040px); margin: 0 auto; padding: 48px 0 64px; }
@@ -50,23 +58,22 @@
     [hidden] { display: none !important; }
     .eyebrow { margin: 0 0 8px; color: var(--green); font-size: 12px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
     h1 { margin: 0; font-family: "Trebuchet MS", "Arial Black", ui-sans-serif, sans-serif; font-size: clamp(28px, 4vw, 38px); font-weight: 900; letter-spacing: -.055em; line-height: 1.15; }
-    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
+    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 15px; font-weight: 600; }
     .theme-toggle, .storage-badge { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 37px; padding: 8px 12px; border: 2px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 800; white-space: nowrap; box-shadow: 2px 2px 0 var(--line); }
     .theme-toggle { transition: transform .12s, box-shadow .12s; }
     .theme-toggle:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--line); }
-    .theme-icon { color: #d57820; font-size: 15px; }
+    .theme-icon { color: var(--accent); font-size: 15px; }
     .storage-badge { min-height: 32px; padding: 6px 10px; font-size: 11px; }
     .storage-dot { width: 8px; height: 8px; border: 1px solid var(--line); border-radius: 50%; background: #e1a62b; }
     .storage-badge.connected .storage-dot { background: #27a36a; }
     .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-    .card { border: 2px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+    .card { border: 2px solid var(--line); border-radius: 5px; background: var(--surface); box-shadow: var(--shadow); }
     .summary-card { min-height: 138px; padding: 22px 24px; }
     .summary-label { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 13px; font-weight: 750; }
     .summary-icon { display: grid; width: 29px; height: 29px; place-items: center; border: 1.5px solid var(--line); border-radius: 8px; font-size: 16px; font-weight: 900; }
     .income .summary-icon { background: var(--green-soft); color: var(--green); }
     .expense .summary-icon { background: var(--red-soft); color: var(--red); }
-    .savings .summary-icon { background: var(--blue-soft); color: #286683; }
-    :root[data-theme="dark"] .savings .summary-icon { color: #a7e2ff; }
+    .savings .summary-icon { background: var(--blue-soft); color: var(--green); }
     .summary-value { margin-top: 16px; font-size: clamp(20px, 3vw, 27px); font-weight: 900; letter-spacing: -.04em; overflow-wrap: anywhere; }
     .analytics-panel { margin-bottom: 24px; padding: 24px; }
     .analytics-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px; }
@@ -90,17 +97,17 @@
     .content-grid { display: grid; grid-template-columns: minmax(270px, .82fr) minmax(0, 1.5fr); gap: 20px; align-items: start; }
     .panel { padding: 24px; }
     .panel-heading { margin: 0; font-size: 17px; font-weight: 850; letter-spacing: -.02em; }
-    .panel-description { margin: 7px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .panel-description { margin: 7px 0 22px; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1.5; }
     .field { display: block; margin-bottom: 16px; }
     .field-label { display: block; margin-bottom: 7px; color: var(--ink); font-size: 12px; font-weight: 800; }
     .field-hint { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; }
-    input, select { width: 100%; height: 44px; padding: 0 12px; border: 2px solid var(--line); border-radius: 7px; outline: none; background: var(--surface); color: var(--ink); }
-    input:focus, select:focus { border-color: #e58b2a; box-shadow: 3px 3px 0 #e58b2a; }
+    input, select { width: 100%; height: 44px; padding: 0 12px; border: 2px solid var(--line); border-radius: 3px; outline: none; background: var(--surface); color: var(--ink); }
+    input:focus, select:focus { border-color: var(--focus); box-shadow: 3px 3px 0 var(--focus); }
     input::placeholder { color: var(--muted); opacity: .7; }
     .amount-wrap { position: relative; }
     .amount-wrap input { padding-left: 46px; }
     .currency-prefix { position: absolute; top: 50%; left: 13px; color: var(--muted); font-size: 13px; font-weight: 750; transform: translateY(-50%); }
-    .primary-button { width: 100%; min-height: 45px; border: 2px solid var(--line); border-radius: 7px; background: #e8842e; color: #211a10; font-weight: 900; box-shadow: 3px 3px 0 var(--line); transition: transform .12s, box-shadow .12s; }
+    .primary-button { width: 100%; min-height: 45px; border: 2px solid var(--line); border-radius: 3px; background: var(--accent); color: var(--accent-ink); font-weight: 900; box-shadow: 3px 3px 0 var(--line); transition: transform .12s, box-shadow .12s; }
     .primary-button:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--line); }
     .primary-button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--line); }
     .transactions-panel { padding: 24px 24px 8px; }
@@ -149,7 +156,7 @@
     .confirm-button { min-height: 39px; padding: 8px 13px; border: 2px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 850; box-shadow: 2px 2px 0 var(--line); }
     .confirm-button:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--line); }
     .confirm-button.danger { background: var(--red-soft); color: var(--ink); }
-    .confirm-button.primary { background: #e8842e; color: #211a10; }
+    .confirm-button.primary { background: var(--accent); color: var(--accent-ink); }
     .footer-note { margin: 20px 2px 0; color: #869189; font-size: 11px; line-height: 1.6; }
     :root[data-theme="dark"] .footer-note { color: var(--muted); }
 

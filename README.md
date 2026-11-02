@@ -13,12 +13,20 @@ Project ini dibuat sebagai aplikasi single-page yang dapat dijalankan tanpa back
 - Mode tamu dengan penyimpanan lokal di browser
 - Login Google dengan Firebase Auth
 - Sinkronisasi data per akun pengguna
-- Tema terang dan gelap
+- Tema retro terang dan gelap dengan palet olive dan mustard
 - Hapus transaksi satu per satu, berdasarkan filter, atau seluruh data
 - Edit / ubah transaksi dengan memilih item lalu simpan ulang ke Firebase
 - Bulk delete / pilih banyak transaksi sekaligus
 - Notifikasi harian 21:00 sebagai reminder untuk menyelesaikan pencatatan hari ini
 - Alert berhasil menambah atau menghapus transaksi
+
+## Tema visual
+
+Ma-Money menggunakan gaya retro dengan tekstur kertas halus, garis dan bayangan tegas, serta warna olive dan mustard.
+
+- Mode terang memakai latar olive-krem (`#e9e4c9`), permukaan krem muda (`#f5efd8`), dan aksen mustard (`#d6a344`).
+- Mode gelap memakai latar olive gelap (`#282b20`), permukaan hijau zaitun gelap (`#34372a`), dan aksen mustard (`#d9a84e`).
+- Tombol **Mode gelap** di bagian atas halaman digunakan untuk beralih antara kedua mode tersebut.
 
 ## Teknologi yang dipakai
 

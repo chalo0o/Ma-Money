@@ -164,6 +164,24 @@
       return Number(value).toLocaleString("id-ID");
     }
 
+    elements.amount.addEventListener("input", () => {
+      const value = elements.amount.value;
+      const cursorPosition = elements.amount.selectionStart ?? value.length;
+      const digitsBeforeCursor = (value.slice(0, cursorPosition).match(/\d/g) || []).length;
+      const digits = value.replace(/\D/g, "");
+      const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      if (formatted === value) return;
+
+      elements.amount.value = formatted;
+      let nextCursorPosition = 0;
+      let digitsSeen = 0;
+      while (nextCursorPosition < formatted.length && digitsSeen < digitsBeforeCursor) {
+        if (/\d/.test(formatted[nextCursorPosition])) digitsSeen++;
+        nextCursorPosition++;
+      }
+      elements.amount.setSelectionRange(nextCursorPosition, nextCursorPosition);
+    });
+
     function resetTransactionForm() {
       editingTransactionId = null;
       elements.form.reset();

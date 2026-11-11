@@ -46,7 +46,7 @@ Buka file `index.html` menggunakan server web lokal, atau akses URL deploy yang 
 
 1. Pilih jenis transaksi (`Pemasukan` atau `Pengeluaran`)
 2. Masukkan deskripsi transaksi
-3. Masukkan nominal dalam rupiah
+3. Masukkan nominal dalam rupiah; pemisah ribuan berupa titik akan ditambahkan otomatis
 4. Klik tombol `+ Tambah transaksi`
 
 ### 3. Gunakan filter
